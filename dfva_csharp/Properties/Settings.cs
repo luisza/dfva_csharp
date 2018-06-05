@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace dfva_csharp_console.Properties
+namespace dfva_csharp.Properties
 {
     public class Settings
     {

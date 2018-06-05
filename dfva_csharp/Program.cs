@@ -1,5 +1,5 @@
 ﻿using System;
-using dfva_csharp_console.Properties;
+using dfva_csharp.Properties;
 using System.Collections.Generic;
 using Org.BouncyCastle.OpenSsl;
 using System.IO;
@@ -7,7 +7,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
 using System.Text;
 
-namespace dfva_csharp_console
+namespace dfva_csharp
 {
     class MainClass
     {

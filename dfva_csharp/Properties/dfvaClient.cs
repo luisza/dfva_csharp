@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace dfva_csharp_console.Properties
+namespace dfva_csharp.Properties
 {
 	public class Client
 	{
