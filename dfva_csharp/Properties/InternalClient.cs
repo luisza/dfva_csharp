@@ -5,34 +5,14 @@ using RestSharp;
 
 namespace dfva_csharp.Properties
 {
-	public class Client
+	public class InternalClient
 	{
 		private Settings settings;
 		private Crypto crypto;
-		private static readonly log4net.ILog log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-		public Client(Settings dfvasettings)
+		public InternalClient(Settings dfvasettings)
 		{
 			settings = dfvasettings;
 			crypto = new Crypto(dfvasettings);
-		}
-
-		private Dictionary<string, object> get_default_sign_error()
-		{
-			Dictionary<string, object> dev = new Dictionary<string, object> {
-				{"code", "N/D"},
-				{"status",  2},
-				{"identification", null},
-				{"id_transaction", 0},
-				{"request_datetime", ""},
-				{"sign_document", ""},
-				{"expiration_datetime", ""},
-                {"received_notification", true},
-                { "duration", 0},
-                {"status_text", "Problema de comunicación interna"}
-			};
-         
-			return dev;
 		}
 
 		public Dictionary<string, string> request_server(string serverurl, Dictionary<string, string> args)
@@ -45,7 +25,7 @@ namespace dfva_csharp.Properties
 			return response.Data;
 		}
         
-		public Dictionary<string, object> _authenticate(string identification)
+		protected Dictionary<string, object> authenticate(string identification)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> {
 				{ "institution", settings.institution},
@@ -72,19 +52,10 @@ namespace dfva_csharp.Properties
 
 			return JsonConvert.DeserializeObject<Dictionary<string, object >>( decrypted );
 		}
-		public Dictionary<string, object> authenticate(string identification){
-			Dictionary<string, object> dev;
-			try{
-				dev = this._authenticate(identification);
-			}catch (Exception e) {
-				dev = get_default_sign_error();
-				log.Error(e.Message);
-			}
-            return dev;
-		}
 
 
-		private Dictionary<string, object> _authenticate_check(string code)
+
+		protected Dictionary<string, object> authenticate_check(string code)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> {
 				{ "institution", settings.institution},
@@ -111,18 +82,8 @@ namespace dfva_csharp.Properties
 
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
        }
-		public Dictionary<string, object> authenticate_check(string code)
-		{
-			Dictionary<string, object> dev;
-            try {
-				dev = this._authenticate_check(code);
-			} catch (Exception e)  {
-                dev = get_default_sign_error();
-				log.Error(e.Message);
-            }
-            return dev;
-		}
-		private bool _authenticate_delete(string code)
+
+		protected bool authenticate_delete(string code)
         {
             Dictionary<string, string> data = new Dictionary<string, string> {
                 { "institution", settings.institution},
@@ -151,22 +112,8 @@ namespace dfva_csharp.Properties
 			ret.TryGetValue("result", out result);
 			return (bool)result;
         }
-		public bool authenticate_delete(string code)
-        {
-			bool dev = false;
-            try
-            {
-				dev = this._authenticate_delete(code);
-            }
-			catch (Exception e)
-            {
-                dev = false;
-				log.Error(e.Message);
-            }
-            return dev;
-        }
 
-		private Dictionary<string, object> _sign(string identification,
+		protected Dictionary<string, object> sign(string identification,
 											byte[] document,
 											string format, //xml_cofirma, xml_contrafirma, odf, msoffice
 										   string resumen)
@@ -202,27 +149,8 @@ namespace dfva_csharp.Properties
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
         }
 
-		public Dictionary<string, object> sign(string identification,
-                                            byte[] document,
-                                            string format, //xml_cofirma, xml_contrafirma, odf, msoffice
-                                           string resumen)
-		{
-			Dictionary<string, object> dev;
-            try
-            {
-                dev = this._sign(identification, 
-				                 document,
-				                 format,
-				                 resumen );
-            }
-			catch (Exception e)
-            {
-                dev = get_default_sign_error();
-				log.Error(e.Message);
-            }
-            return dev;
-		}
-		private Dictionary<string, object> _sign_check(string code)
+
+		protected Dictionary<string, object> sign_check(string code)
         {
             Dictionary<string, string> data = new Dictionary<string, string> {
                 { "institution", settings.institution},
@@ -249,22 +177,9 @@ namespace dfva_csharp.Properties
 
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
         }
-        public Dictionary<string, object> sign_check(string code)
-        {
-            Dictionary<string, object> dev;
-            try
-            {
-                dev = this._sign_check(code);
-            }
-			catch (Exception e)
-            {
-                dev = get_default_sign_error();
-				log.Error(e.Message);
-            }
-            return dev;
-        }
 
-		private bool _sign_delete(string code)
+
+		protected bool sign_delete(string code)
         {
             Dictionary<string, string> data = new Dictionary<string, string> {
                 { "institution", settings.institution},
@@ -293,22 +208,10 @@ namespace dfva_csharp.Properties
             ret.TryGetValue("result", out result);
             return (bool)result;
         }
-        public bool sign_delete(string code)
-        {
-            bool dev = false;
-            try
-            {
-                dev = this._sign_delete(code);
-            }
-			catch (Exception e)
-            {
-                dev = false;
-				log.Error(e.Message);
-            }
-            return dev;
-        }
 
-		private Dictionary<string, object> _validate(byte[] document, string type, string format = null)
+		protected Dictionary<string, object> validate(byte[] document, 
+                                                      string type, 
+                                                      string format = null)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> {
 				{ "institution", settings.institution},
@@ -346,38 +249,7 @@ namespace dfva_csharp.Properties
 			return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
 		}
 
-		public Dictionary<string, object> validate(byte[] document, string type, string format = null){
-			Dictionary<string, object> dev;
-            try
-            {
-				dev = this._validate(document, type, format);
-            }
-			catch (Exception e)
-            {
-                dev = get_default_validate_error();
-				log.Error(e.Message);
-            }
-            return dev;			
-		}
-
-		private Dictionary<string, object> get_default_validate_error()
-		{
-			Dictionary<string, object> dev = new Dictionary<string, object> {
-                {"code", "N/D"},
-                {"status",  2},
-                {"identification", null},
-                {"id_transaction", 0},
-                {"sign_document", ""},
-                {"expiration_datetime", ""},
-                {"received_notification", true},
-                {"status_text", "Problema de comunicación interna"}
-            };
-
-            return dev;
-
-		}
-
-		private bool _suscriptor_connected(string identification){
+		protected bool suscriptor_connected(string identification){
 			Dictionary<string, string> data = new Dictionary<string, string> {
                 { "institution", settings.institution},
                 { "notification_url", settings.notificationURL },
@@ -402,21 +274,13 @@ namespace dfva_csharp.Properties
             response.TryGetValue("is_connected", out result);
 			return Convert.ToBoolean(result);
         }
-		public bool suscriptor_connected(string identification)
-        {
-            bool dev = false;
-            try
-            {
-				dev = this._suscriptor_connected(identification);
-            }
-            catch (Exception e)
-			{
-                dev = false;
-				log.Error(e.Message);
-            }
-            return dev;
-        }
 
+       protected Dictionary<string, object>  get_notify_data(Dictionary<string, object> data){
+            string dataenc = System.String.Empty;
+            data.TryGetValue("data", out dataenc);
+            string decrypted = crypto.decrypt(dataenc);
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
+       }
 	}
     
 }
