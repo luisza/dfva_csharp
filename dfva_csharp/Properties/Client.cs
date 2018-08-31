@@ -9,9 +9,9 @@ public class Client: InternalClient
             log4net.LogManager.GetLogger(
                 System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Client(Settings dfvasettings)
+		public Client(Settings dfvasettings): base(dfvasettings)
 		{
-			base(dfvasettings);
+			
 		}
 
 		private Dictionary<string, object> get_default_validate_error()
@@ -166,7 +166,7 @@ public class Client: InternalClient
             return dev;
         }
 
-        new public Dictionary<string, object>  get_notify_data(Dictionary<string, object> data){
+        new public Dictionary<string, object>  get_notify_data(Dictionary<string, string> data){
             Dictionary<string, object>  dev=null;
             try
             {

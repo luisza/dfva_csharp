@@ -275,7 +275,7 @@ namespace dfva_csharp.Properties
 			return Convert.ToBoolean(result);
         }
 
-       protected Dictionary<string, object>  get_notify_data(Dictionary<string, object> data){
+       protected Dictionary<string, object>  get_notify_data(Dictionary<string, string> data){
             string dataenc = System.String.Empty;
             data.TryGetValue("data", out dataenc);
             string decrypted = crypto.decrypt(dataenc);

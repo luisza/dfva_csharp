@@ -33,6 +33,7 @@ namespace dfva_csharp
 			Console.WriteLine("Delete: " + client.sign_delete(Convert.ToString(code)));
             */
 
+
 			var response = client.authenticate("0403210121");
 			object code;
 			response.TryGetValue("id_transaction",out code);
@@ -43,7 +44,7 @@ namespace dfva_csharp
 				Console.WriteLine(data.Key+" = "+data.Value);
             }
 			Console.WriteLine("Delete: "+client.authenticate_delete(Convert.ToString(code)));
-            
+           
             
 			//var response = client.validate(document, "document", "pdf");
 			/** var response = client.validate(document, "certificate");
