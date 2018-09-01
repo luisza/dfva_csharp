@@ -24,7 +24,31 @@ namespace dfva_csharp.Properties
 			var response = client.Execute<Dictionary<string, string>>(request);
 			return response.Data;
 		}
-        
+
+		private string process_response(Dictionary<string, string> responses)
+        {
+            string dataenc = System.String.Empty;
+			string datahash = System.String.Empty;
+            responses.TryGetValue("data", out dataenc);
+			responses.TryGetValue("data_hash", out datahash);
+            string decrypted = crypto.decrypt(dataenc);
+			string checksum  = crypto.get_hash_sum(decrypted, settings.algorithm);
+			if( !checksum.Equals(datahash)){
+				Dictionary<string, object> dev = new Dictionary<string, object> {
+                {"code", "N/D"},
+                {"status",  -2},
+                {"identification", null},
+                {"id_transaction", 0},
+                {"sign_document", ""},
+                {"expiration_datetime", ""},
+                {"received_notification", true},
+                {"status_text", "Problema de integridad, suma hash no es igual"}
+                };
+				decrypted = JsonConvert.SerializeObject(dev);
+			}
+
+            return decrypted;
+        }
 		protected Dictionary<string, object> authenticate(string identification)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> {
@@ -45,11 +69,8 @@ namespace dfva_csharp.Properties
 				{ "data_hash",  checksum},
 				{ "data", edata}
             };
-			var response = request_server(settings.authenticate, args);
-            string dataenc = System.String.Empty;
-            response.TryGetValue("data", out dataenc);
-			string decrypted = crypto.decrypt(dataenc);
-
+			var responses = request_server(settings.authenticate, args);
+			string decrypted = process_response(responses);
 			return JsonConvert.DeserializeObject<Dictionary<string, object >>( decrypted );
 		}
 
@@ -77,8 +98,7 @@ namespace dfva_csharp.Properties
 			string url = settings.autenticate_show.Replace("%s", code);
             var responses = request_server(url, args);
 			string dataenc = System.String.Empty;
-            responses.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+            string decrypted = process_response(responses);
 
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
        }
@@ -104,9 +124,7 @@ namespace dfva_csharp.Properties
             };
 			string url = settings.autenticate_delete.Replace("%s", code);
             var responses = request_server(url, args);
-            string dataenc = System.String.Empty;
-            responses.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+            string decrypted = process_response(responses);
 			Dictionary<string, object> ret = JsonConvert.DeserializeObject< Dictionary<string, object>>(decrypted);
 			object result;
 			ret.TryGetValue("result", out result);
@@ -141,15 +159,13 @@ namespace dfva_csharp.Properties
                 { "data_hash",  checksum},
                 { "data", edata}
             };
-			var response = request_server(settings.sign, args);
-            string dataenc = System.String.Empty;
-            response.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+			var responses = request_server(settings.sign, args);
+			string decrypted = process_response(responses);
 
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
         }
 
-
+        
 		protected Dictionary<string, object> sign_check(string code)
         {
             Dictionary<string, string> data = new Dictionary<string, string> {
@@ -171,9 +187,7 @@ namespace dfva_csharp.Properties
             };
             string url = settings.sign_show.Replace("%s", code);
             var responses = request_server(url, args);
-            string dataenc = System.String.Empty;
-            responses.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+            string decrypted = process_response(responses);
 
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
         }
@@ -200,9 +214,7 @@ namespace dfva_csharp.Properties
             };
             string url = settings.sign_delete.Replace("%s", code);
             var responses = request_server(url, args);
-            string dataenc = System.String.Empty;
-            responses.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+            string decrypted = process_response(responses);
             Dictionary<string, object> ret = JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
             object result;
             ret.TryGetValue("result", out result);
@@ -242,9 +254,7 @@ namespace dfva_csharp.Properties
 				url = settings.validate_document;
 			}
             var responses = request_server(url, args);
-            string dataenc = System.String.Empty;
-            responses.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+            string decrypted = process_response(responses);
 
 			return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
 		}
@@ -276,9 +286,7 @@ namespace dfva_csharp.Properties
         }
 
        protected Dictionary<string, object>  get_notify_data(Dictionary<string, string> data){
-            string dataenc = System.String.Empty;
-            data.TryGetValue("data", out dataenc);
-            string decrypted = crypto.decrypt(dataenc);
+			string decrypted = process_response(data);
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(decrypted);
        }
 	}
