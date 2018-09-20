@@ -10,7 +10,7 @@ using System.IO;
 using Org.BouncyCastle.Crypto.Modes;
 using System.Security.Cryptography;
 
-namespace dfva_csharp.Properties
+namespace dfva_csharp.dfva
 {
     public class Crypto
     {

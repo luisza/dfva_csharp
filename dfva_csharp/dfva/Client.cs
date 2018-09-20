@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace dfva_csharp.Properties
+namespace dfva_csharp.dfva
 {
 public class Client: InternalClient
 	{

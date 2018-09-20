@@ -2,7 +2,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace dfva_csharp.Properties
+namespace dfva_csharp.dfva
 {
     public class Settings
     {
@@ -27,18 +27,7 @@ namespace dfva_csharp.Properties
         public string notificationURL = "N/D";
         public string algorithm = "sha512"; // sha512, sha384, sha256
 
-        public Settings()
-        {
-          
-			load();
-			if (File.Exists(publicCertificate))
-			{
-				using (StreamReader fs = File.OpenText(publicCertificate))
-                {
-					publicCertificate = fs.ReadToEnd();
-                }            
-			}
-        }
+        public Settings() { }
 
 
 		private string get_home_folder(){
@@ -95,6 +84,13 @@ namespace dfva_csharp.Properties
 				dev = false;
 				save();
 			}
+			if (File.Exists(publicCertificate))
+            {
+                using (StreamReader fs = File.OpenText(publicCertificate))
+                {
+                    publicCertificate = fs.ReadToEnd();
+                }
+            }
             return dev;
         }
 

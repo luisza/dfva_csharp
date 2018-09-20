@@ -2,7 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 
-namespace dfva_csharp_console.Properties
+namespace dfva_csharp.dfva
 {
     public static class SHA
     {
