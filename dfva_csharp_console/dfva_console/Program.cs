@@ -8,8 +8,11 @@ namespace dfva_csharp_console
 {
     class MainClass
     {
+		private static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger("dfva_csharp");
         public static void Main(string[] args)
         {
+			log.Debug("INICIANDO DEMO");
 			Settings settings = new Settings();
 			settings.load();
 			var client = new Client(settings);

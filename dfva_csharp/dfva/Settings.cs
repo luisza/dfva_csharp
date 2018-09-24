@@ -7,7 +7,7 @@ namespace dfva_csharp.dfva
     public class Settings
     {
 		private static readonly log4net.ILog log =
-            log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+            log4net.LogManager.GetLogger("dfva_csharp");
 
 		public string publicCertificate = "";
 		public string publicKey = "";
