@@ -68,10 +68,8 @@ namespace dfva_csharp.dfva
 
 		private byte[] get_encrypted_session_key(byte[] session_key){
 			int length = session_key.Length;
-			PemReader pr = new PemReader(
-                (StreamReader)File.OpenText(settings.publicKey)
-            );
-            RsaKeyParameters keys = (RsaKeyParameters)pr.ReadObject();
+			
+            RsaKeyParameters keys = settings.get_public_key(); 
 
             // Pure mathematical RSA implementation
             // RsaEngine eng = new RsaEngine();
@@ -149,12 +147,8 @@ namespace dfva_csharp.dfva
 		}
 
 		private byte[] get_plain_session_key(byte[] cipherTextBytes){
-			
-            PemReader pr = new PemReader(
-				(StreamReader)File.OpenText(settings.privateKey)
-            );
-            
-			RsaPrivateCrtKeyParameters keys = (RsaPrivateCrtKeyParameters)pr.ReadObject();
+
+            RsaPrivateCrtKeyParameters keys = settings.get_private_key();
             
 
             // Pure mathematical RSA implementation
@@ -176,11 +170,7 @@ namespace dfva_csharp.dfva
         
 		public string decrypt(string data){
 			byte[] bdata = Convert.FromBase64String(data);
-			PemReader pr = new PemReader(
-				(StreamReader)File.OpenText(settings.privateKey)
-            );
-           
-			RsaKeyParameters keys = (RsaKeyParameters)pr.ReadObject();
+			RsaKeyParameters keys = settings.get_private_key();
 			int key_size= keys.Modulus.BitLength / 8;
 			byte[] enc_session_key = new byte[key_size];
             byte[] nonce = new byte[NONCE_LEN];

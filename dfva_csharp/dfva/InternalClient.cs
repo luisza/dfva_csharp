@@ -7,7 +7,9 @@ namespace dfva_csharp.dfva
 {
 	public class InternalClient
 	{
-		private Settings settings;
+        private static readonly log4net.ILog log =
+            log4net.LogManager.GetLogger("dfva_csharp");
+        private Settings settings;
 		private Crypto crypto;
 		public InternalClient(Settings dfvasettings)
 		{
@@ -64,11 +66,12 @@ namespace dfva_csharp.dfva
 			Dictionary<string, string> args = new Dictionary<string, string>
             {
 				{ "algorithm", settings.algorithm },
-				{ "public_certificate", settings.publicCertificate },
+				{ "public_certificate", settings.get_certificate() },
 				{ "institution", settings.institution},
 				{ "data_hash",  checksum},
 				{ "data", edata}
             };
+          //  log.Debug(args);
 			var responses = request_server(settings.authenticate, args);
 			string decrypted = process_response(responses);
 			return JsonConvert.DeserializeObject<Dictionary<string, object >>( decrypted );
@@ -90,7 +93,7 @@ namespace dfva_csharp.dfva
 			Dictionary<string, string> args = new Dictionary<string, string>
 			{
 				{ "algorithm", settings.algorithm },
-				{ "public_certificate", settings.publicCertificate },
+				{ "public_certificate", settings.get_certificate() },
 				{ "institution", settings.institution},
 				{ "data_hash",  checksum},
 				{ "data", edata}
@@ -117,7 +120,7 @@ namespace dfva_csharp.dfva
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "algorithm", settings.algorithm },
-                { "public_certificate", settings.publicCertificate },
+                { "public_certificate", settings.get_certificate() },
                 { "institution", settings.institution},
                 { "data_hash",  checksum},
                 { "data", edata}
@@ -154,7 +157,7 @@ namespace dfva_csharp.dfva
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "algorithm", settings.algorithm },
-                { "public_certificate", settings.publicCertificate },
+                { "public_certificate", settings.get_certificate() },
                 { "institution", settings.institution},
                 { "data_hash",  checksum},
                 { "data", edata}
@@ -180,7 +183,7 @@ namespace dfva_csharp.dfva
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "algorithm", settings.algorithm },
-                { "public_certificate", settings.publicCertificate },
+                { "public_certificate", settings.get_certificate() },
                 { "institution", settings.institution},
                 { "data_hash",  checksum},
                 { "data", edata}
@@ -207,7 +210,7 @@ namespace dfva_csharp.dfva
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "algorithm", settings.algorithm },
-                { "public_certificate", settings.publicCertificate },
+                { "public_certificate", settings.get_certificate() },
                 { "institution", settings.institution},
                 { "data_hash",  checksum},
                 { "data", edata}
@@ -242,7 +245,7 @@ namespace dfva_csharp.dfva
 			Dictionary<string, string> args = new Dictionary<string, string>
 			{
 				{ "algorithm", settings.algorithm },
-				{ "public_certificate", settings.publicCertificate },
+				{ "public_certificate", settings.get_certificate() },
 				{ "institution", settings.institution},
 				{ "data_hash",  checksum},
 				{ "data", edata}
@@ -273,7 +276,7 @@ namespace dfva_csharp.dfva
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "algorithm", settings.algorithm },
-                { "public_certificate", settings.publicCertificate },
+                { "public_certificate", settings.get_certificate() },
                 { "institution", settings.institution},
                 { "data_hash",  checksum},
                 { "data", edata}

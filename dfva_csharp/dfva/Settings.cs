@@ -1,17 +1,23 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
 
 namespace dfva_csharp.dfva
 {
     public class Settings
     {
-		private static readonly log4net.ILog log =
+        private static readonly log4net.ILog log =
             log4net.LogManager.GetLogger("dfva_csharp");
 
-		public string publicCertificate = "";
-		public string publicKey = "";
-		public string privateKey = "";
+        private string _publicCertificate = null;
+        public RsaKeyParameters _publicKey = null;
+        public RsaPrivateCrtKeyParameters _privateKey = null;
+
+        public string publicCertificate = "";
+        public string publicKey = "";
+        public string privateKey = "";
 
         public string baseUrl = "";
         public string authenticate = "/authenticate/institution/";
@@ -23,28 +29,67 @@ namespace dfva_csharp.dfva
         public string autenticate_delete = "/authenticate/%s/institution_delete/";
         public string sign_show = "/sign/%s/institution_show/";
         public string sign_delete = "/sign/%s/institution_delete/";
-		public string institution = "";
+        public string institution = "";
         public string notificationURL = "N/D";
         public string algorithm = "sha512"; // sha512, sha384, sha256
 
         public Settings() { }
 
 
-		private string get_home_folder(){
+        private string get_home_folder() {
 
-			string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
+            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
                    Environment.OSVersion.Platform == PlatformID.MacOSX)
     ? Environment.GetEnvironmentVariable("HOME")
-    : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
-         
-			    string home = Path.Combine(homePath, ".dfva_csharp");
-			if(!Directory.Exists(home)){
-				Directory.CreateDirectory(home);
-			}
-			return home;
-		}
+    : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            
 
-		public bool save(){
+            string home = Path.Combine(homePath, ".dfva_csharp");
+            log.Debug(home);
+            if (!Directory.Exists(home)) {
+                Directory.CreateDirectory(home);
+            }
+            return home;
+        }
+
+        public RsaPrivateCrtKeyParameters get_private_key() {
+           if (this._privateKey == null) {
+                string key = this.privateKey.Replace("$HOME",
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                );
+                 
+                PemReader pr = new PemReader( (StreamReader)File.OpenText(key) );
+                this._privateKey = (RsaPrivateCrtKeyParameters)pr.ReadObject();
+            }
+
+            return this._privateKey;
+        }
+        public RsaKeyParameters get_public_key() {
+            if(this._publicKey == null) {
+                string key = this.publicKey.Replace("$HOME",
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                    );
+                PemReader pr = new PemReader((StreamReader)File.OpenText(key));
+                this._publicKey= (RsaKeyParameters)pr.ReadObject();
+            }
+            return this._publicKey;
+        }
+
+        public string get_certificate() {
+            if(this._publicCertificate == null) {
+                string key = publicCertificate.Replace("$HOME",
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+                );
+                if (File.Exists(key)){
+                    using (StreamReader fs = File.OpenText(key)){
+                        this._publicCertificate = fs.ReadToEnd();
+                    }
+                }
+            }
+            return this._publicCertificate;
+        }
+
+        public bool save(){
 			bool dev = true;
 			string home = get_home_folder();
 			string path = Path.Combine(home, "dfva_settings.json");
@@ -84,13 +129,6 @@ namespace dfva_csharp.dfva
 				dev = false;
 				save();
 			}
-			if (File.Exists(publicCertificate))
-            {
-                using (StreamReader fs = File.OpenText(publicCertificate))
-                {
-                    publicCertificate = fs.ReadToEnd();
-                }
-            }
             return dev;
         }
 
