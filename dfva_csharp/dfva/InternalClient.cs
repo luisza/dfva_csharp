@@ -11,10 +11,12 @@ namespace dfva_csharp.dfva
             log4net.LogManager.GetLogger("dfva_csharp");
         private Settings settings;
 		private Crypto crypto;
+		public bool inspect;
 		public InternalClient(Settings dfvasettings)
 		{
 			settings = dfvasettings;
 			crypto = new Crypto(dfvasettings);
+			inspect = false;
 		}
 
 		public Dictionary<string, string> request_server(string serverurl, Dictionary<string, string> args)
@@ -24,7 +26,13 @@ namespace dfva_csharp.dfva
 			request.AddJsonBody(args);
 			request.AddHeader("Content-Type", "application/json");
 			var response = client.Execute<Dictionary<string, string>>(request);
-			return response.Data;
+			var dev = response.Data;
+			if(this.inspect){
+				log.Debug(response.IsSuccessful);
+				log.Debug(response.Content);
+			}
+
+			return dev;
 		}
 
 		private string process_response(Dictionary<string, string> responses)
@@ -47,6 +55,9 @@ namespace dfva_csharp.dfva
                 {"status_text", "Problema de integridad, suma hash no es igual"}
                 };
 				decrypted = JsonConvert.SerializeObject(dev);
+			}
+			if(inspect){
+				log.Debug(decrypted);
 			}
 
             return decrypted;

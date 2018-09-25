@@ -53,7 +53,7 @@ public class Client: InternalClient
 				dev = base.authenticate(identification);
 			}catch (Exception e) {
 				dev = get_default_sign_error();
-				log.Error("dfva_csharp authenticate: " +e.Message);
+				log.Error("dfva_csharp authenticate: " +e.ToString());
 			}
             return dev;
 		}
@@ -65,7 +65,7 @@ public class Client: InternalClient
 				dev = base.authenticate_check(code);
 			} catch (Exception e)  {
                 dev = get_default_sign_error();
-				log.Error("dfva_csharp authenticate_check: " +e.Message);
+				log.Error("dfva_csharp authenticate_check: " +e.ToString());
             }
             return dev;
 		}
@@ -80,7 +80,7 @@ public class Client: InternalClient
 			catch (Exception e)
             {
                 dev = false;
-				log.Error("dfva_csharp authenticate_delete: " +e.Message);
+				log.Error("dfva_csharp authenticate_delete: " +e.ToString());
             }
             return dev;
         }
@@ -101,7 +101,7 @@ public class Client: InternalClient
 			catch (Exception e)
             {
                 dev = get_default_sign_error();
-				log.Error("dfva_csharp sign: " + e.Message);
+				log.Error("dfva_csharp sign: " + e.ToString());
             }
             return dev;
 		}
@@ -115,7 +115,7 @@ public class Client: InternalClient
 			catch (Exception e)
             {
                 dev = get_default_sign_error();
-				log.Error("dfva_csharp sign_check: " +e.Message);
+				log.Error("dfva_csharp sign_check: " +e.ToString());
             }
             return dev;
         }
@@ -130,7 +130,7 @@ public class Client: InternalClient
 			catch (Exception e)
             {
                 dev = false;
-				log.Error("dfva_csharp sign_delete: " +e.Message);
+				log.Error("dfva_csharp sign_delete: " +e.ToString());
             }
             return dev;
         }
@@ -145,7 +145,7 @@ public class Client: InternalClient
 			catch (Exception e)
             {
                 dev = get_default_validate_error();
-				log.Error("dfva_csharp validate: "+e.Message);
+				log.Error("dfva_csharp validate: "+e.ToString());
             }
             return dev;			
 		}        
@@ -160,7 +160,7 @@ public class Client: InternalClient
             catch (Exception e)
 			{
                 dev = false;
-				log.Error("dfva_csharp suscriptor_connected: " +e.Message);
+				log.Error("dfva_csharp suscriptor_connected: " +e.ToString());
             }
             return dev;
         }
@@ -172,7 +172,7 @@ public class Client: InternalClient
 				dev = base.get_notify_data(data);
             }catch (Exception e)
 			{
-				log.Error("dfva_csharp get_notify_data: "+e.Message);
+				log.Error("dfva_csharp get_notify_data: "+e.ToString());
             }
             return dev;
         }
