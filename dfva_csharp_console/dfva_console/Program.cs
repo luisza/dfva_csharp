@@ -16,7 +16,7 @@ namespace dfva_csharp_console
                    Environment.OSVersion.Platform == PlatformID.MacOSX)
     ? Environment.GetEnvironmentVariable("HOME")
     : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
+            
             log.Info("Recuerde crear el archivo test.pdf en su carpeta personal");
             string testpdf = Path.Combine(homePath, "test.pdf");
 
@@ -31,7 +31,7 @@ namespace dfva_csharp_console
             log.Info("---- FIRMANDO UN PDF ----");
             byte[] document =
             Encoding.UTF8.GetBytes(File.OpenText(testpdf).ReadToEnd());
-
+            
             var response = client.sign("0403210121",
                         document,
                         "pdf",
@@ -60,7 +60,7 @@ namespace dfva_csharp_console
             }
             Console.WriteLine("Delete: " + client.authenticate_delete(Convert.ToString(code2)));
 
-			client.inspect = true;
+			//client.inspect = true;
             log.Info("--- VALIDANDO DOCUMENTOS ---");
             var response3 = client.validate(document, "document", "pdf");
             //var response4 = client.validate(document, "certificate");
@@ -68,7 +68,7 @@ namespace dfva_csharp_console
             {
                 Console.WriteLine(data.Key + " = " + data.Value);
             }
-
+            
             log.Info("--- VALIDANDO CERTIFICADOS ---");
             var response4 = client.validate(document, "certificate");
             foreach (KeyValuePair<string, object> data in response4)
