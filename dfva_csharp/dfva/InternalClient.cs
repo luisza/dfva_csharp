@@ -148,7 +148,9 @@ namespace dfva_csharp.dfva
 		protected Dictionary<string, object> sign(string identification,
 											byte[] document,
 											string format, //xml_cofirma, xml_contrafirma, odf, msoffice
-										   string resumen)
+										   string resumen, 
+                                           string reason,
+                                           string place)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> {
 				{ "institution", settings.institution},
@@ -161,6 +163,11 @@ namespace dfva_csharp.dfva
 				{"algorithm_hash", settings.algorithm},
 				{"document_hash", crypto.get_hash_sum(document, settings.algorithm) }
             };
+            if (format.Contains("pdf")){
+                data.Add("reason", reason);
+                data.Add("place", place);
+            }
+
 
             string str_data = JsonConvert.SerializeObject(data);
             string edata = crypto.encrypt(str_data);

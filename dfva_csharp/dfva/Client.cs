@@ -87,16 +87,30 @@ public class Client: InternalClient
 
 		new public Dictionary<string, object> sign(string identification,
                                             byte[] document,
-                                            string format, //xml_cofirma, xml_contrafirma, odf, msoffice
-                                           string resumen)
+                                            string format, //xml_cofirma, xml_contrafirma, odf, msoffice,pdf
+                                           string resumen,
+                                           string reason=null, 
+                                           string place=null)
 		{
-			Dictionary<string, object> dev;
+
+            Dictionary<string, object> dev;
+            if (format.Contains("pdf")) {
+                if (reason == null || place == null ) {
+                    dev = get_default_sign_error();
+                    dev["status"] = -2;
+                    dev["status_text"] = "Firma pdf sin razon o lugar";
+                    return dev;
+                }
+            }
+
             try
             {
                 dev = base.sign(identification, 
 				                 document,
 				                 format,
-				                 resumen );
+				                 resumen,
+                                 reason,
+                                 place);
             }
 			catch (Exception e)
             {
