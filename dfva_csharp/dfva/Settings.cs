@@ -32,56 +32,75 @@ namespace dfva_csharp.dfva
         public string institution = "";
         public string notificationURL = "N/D";
         public string algorithm = "sha512"; // sha512, sha384, sha256
+        private string homePath = null;
 
         public Settings() { }
 
 
-        private string get_home_folder() {
+        private string get_home_folder()
+        {
 
-            string homePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
-                   Environment.OSVersion.Platform == PlatformID.MacOSX)
-    ? Environment.GetEnvironmentVariable("HOME")
-    : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            
+            if (this.homePath == null)
+            {
+                string newhomePath = (Environment.OSVersion.Platform == PlatformID.Unix ||
+                       Environment.OSVersion.Platform == PlatformID.MacOSX)
+        ? Environment.GetEnvironmentVariable("HOME")
+        : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-            string home = Path.Combine(homePath, ".dfva_csharp");
-            log.Debug(home);
-            if (!Directory.Exists(home)) {
-                Directory.CreateDirectory(home);
+
+                string home = Path.Combine(newhomePath, ".dfva_csharp");
+                log.Debug(home);
+                if (!Directory.Exists(home))
+                {
+                    Directory.CreateDirectory(home);
+                }
+                this.homePath = home;
             }
-            return home;
+            return this.homePath;
         }
 
-        public RsaPrivateCrtKeyParameters get_private_key() {
-           if (this._privateKey == null) {
+        public void SetHomePath(string homePath) {
+            this.homePath = homePath;
+        }
+
+        public RsaPrivateCrtKeyParameters get_private_key()
+        {
+            if (this._privateKey == null)
+            {
                 string key = this.privateKey.Replace("$HOME",
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 );
-                 
-                PemReader pr = new PemReader( (StreamReader)File.OpenText(key) );
+
+                PemReader pr = new PemReader((StreamReader)File.OpenText(key));
                 this._privateKey = (RsaPrivateCrtKeyParameters)pr.ReadObject();
             }
 
             return this._privateKey;
         }
-        public RsaKeyParameters get_public_key() {
-            if(this._publicKey == null) {
+        public RsaKeyParameters get_public_key()
+        {
+            if (this._publicKey == null)
+            {
                 string key = this.publicKey.Replace("$HOME",
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                     );
                 PemReader pr = new PemReader((StreamReader)File.OpenText(key));
-                this._publicKey= (RsaKeyParameters)pr.ReadObject();
+                this._publicKey = (RsaKeyParameters)pr.ReadObject();
             }
             return this._publicKey;
         }
 
-        public string get_certificate() {
-            if(this._publicCertificate == null) {
+        public string get_certificate()
+        {
+            if (this._publicCertificate == null)
+            {
                 string key = publicCertificate.Replace("$HOME",
                     Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
                 );
-                if (File.Exists(key)){
-                    using (StreamReader fs = File.OpenText(key)){
+                if (File.Exists(key))
+                {
+                    using (StreamReader fs = File.OpenText(key))
+                    {
                         this._publicCertificate = fs.ReadToEnd();
                     }
                 }
@@ -89,67 +108,58 @@ namespace dfva_csharp.dfva
             return this._publicCertificate;
         }
 
-        public bool save(){
-			bool dev = true;
-			string home = get_home_folder();
-			string path = Path.Combine(home, "dfva_settings.json");
-
-			try{
-			    string data = JsonConvert.SerializeObject(this);
-
-			    File.WriteAllText(path, data);
-			}
-            catch (Exception e)
-            {
-				
-                log.Error(e.Message);
-				dev = false;
-            }
-			return dev;
-		}
-
-		public bool load()
+        public bool save()
         {
-			bool dev=true;
+            bool dev = true;
             string home = get_home_folder();
             string path = Path.Combine(home, "dfva_settings.json");
-
-			if (File.Exists(path)){
-				try{
-					using (StreamReader fs = File.OpenText(path)){ 
-                    Settings data = JsonConvert.DeserializeObject<Settings>(
-							fs.ReadToEnd());
-						this.copy(data);
-					} 
-				}catch (Exception e){
-					log.Error(e.Message);
-                    dev = false;
-				}
-			}else{ 
-				dev = false;
-				save();
-			}
+            string data = JsonConvert.SerializeObject(this);
+            File.WriteAllText(path, data);
             return dev;
         }
 
-		public bool copy(Settings other){
-			publicCertificate = other.publicCertificate;
-			publicKey = other.publicKey;
-			privateKey = other.privateKey;
-			baseUrl = other.baseUrl;
-			authenticate = other.authenticate;
-			sign = other.sign;
-			validate_certificate = other.validate_certificate;
-			validate_document = other.validate_document;
-			suscriptor_conected = other.suscriptor_conected;
-			autenticate_show = other.autenticate_show;
-			autenticate_delete = other.autenticate_delete;
-			sign_show = other.sign_show;
-			sign_delete = other.sign_delete;
-			institution = other.institution;
-			notificationURL = other.notificationURL;
-			algorithm = other.algorithm;
-			return true;
-		}
+        public bool load()
+        {
+            bool dev = true;
+            string home = get_home_folder();
+            string path = Path.Combine(home, "dfva_settings.json");
+
+            if (File.Exists(path))
+            {
+                using (StreamReader fs = File.OpenText(path))
+                {
+                    Settings data = JsonConvert.DeserializeObject<Settings>(
+                            fs.ReadToEnd());
+                    this.copy(data);
+                }
+            }
+            else
+            {
+                dev = false;
+                save();
+            }
+            return dev;
+        }
+
+        public bool copy(Settings other)
+        {
+            publicCertificate = other.publicCertificate;
+            publicKey = other.publicKey;
+            privateKey = other.privateKey;
+            baseUrl = other.baseUrl;
+            authenticate = other.authenticate;
+            sign = other.sign;
+            validate_certificate = other.validate_certificate;
+            validate_document = other.validate_document;
+            suscriptor_conected = other.suscriptor_conected;
+            autenticate_show = other.autenticate_show;
+            autenticate_delete = other.autenticate_delete;
+            sign_show = other.sign_show;
+            sign_delete = other.sign_delete;
+            institution = other.institution;
+            notificationURL = other.notificationURL;
+            algorithm = other.algorithm;
+            return true;
+        }
     }
 }
