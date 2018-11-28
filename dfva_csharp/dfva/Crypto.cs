@@ -24,20 +24,22 @@ namespace dfva_csharp.dfva
 
 		private static string GetStringFromHash(byte[] hash)
         {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
+            StringBuilder result = new System.Text.StringBuilder();
+            foreach (byte theByte in hash)
             {
-                result.Append(hash[i].ToString("X2"));
+                result.Append(theByte.ToString("x2"));
             }
-			return result.ToString().ToLower();
-        }
+           // Console.WriteLine(">>>"+ result.ToString() );
+            return result.ToString().ToLower();
+          }
 
-		public string get_hash_sum(string data, string algorithm){
+		public string get_hash_sum(string data, string algorithm, bool b64 = false)
+        {
 
-			return get_hash_sum(Encoding.UTF8.GetBytes(data), algorithm);
+			return get_hash_sum(Encoding.UTF8.GetBytes(data), algorithm, b64);
 		}
       
-		public string get_hash_sum(byte[] bdata, string algorithm)
+		public string get_hash_sum(byte[] bdata, string algorithm, bool b64=false)
         {
 			
 			byte[] computedHash = null;
@@ -60,7 +62,10 @@ namespace dfva_csharp.dfva
 
 				throw new Exception("No algorithm found should be sha256, sha384 or sha512");
 			}
-      
+
+            if (b64 == true) {
+                return Convert.ToBase64String(computedHash);
+            }
 			string computed=GetStringFromHash(computedHash);
 			//Console.WriteLine(computed);
 			return computed;

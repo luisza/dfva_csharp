@@ -161,7 +161,7 @@ namespace dfva_csharp.dfva
 				{"resumen", resumen},
 				{"document", Convert.ToBase64String(document)},
 				{"algorithm_hash", settings.algorithm},
-				{"document_hash", crypto.get_hash_sum(document, settings.algorithm) }
+				{"document_hash", crypto.get_hash_sum(document, settings.algorithm, true) }
             };
             if (format.Contains("pdf")){
                 data.Add("reason", reason);
