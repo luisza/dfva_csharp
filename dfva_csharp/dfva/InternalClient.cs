@@ -28,7 +28,7 @@ namespace dfva_csharp.dfva
 			var response = client.Execute<Dictionary<string, string>>(request);
 			var dev = response.Data;
 			if(this.inspect){
-				log.Debug(response.IsSuccessful);
+				log.Debug(response.StatusCode);
 				log.Debug(response.Content);
 			}
 

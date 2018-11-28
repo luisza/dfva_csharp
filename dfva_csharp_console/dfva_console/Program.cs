@@ -24,20 +24,30 @@ namespace dfva_csharp_console
             Settings settings = new Settings();
             settings.load();
             var client = new Client(settings);
+           // client.inspect = true;
 
-            log.Info("---- PERSONA CONECTADA ----");
+           /** log.Info("---- PERSONA CONECTADA ----");
             Console.WriteLine(client.suscriptor_connected("0402120119"));
-
+           */
             log.Info("---- FIRMANDO UN PDF ----");
             byte[] document =
             Encoding.UTF8.GetBytes(File.OpenText(testpdf).ReadToEnd());
             
-            var response = client.sign("0403210121",
+            var response = client.sign("04-0212-0119", //"01-1010-2020", 
                         document,
                         "pdf",
-                        "document test"
+                        "document test",
+                         "reason", 
+                         "place"
                        );
 
+        foreach (KeyValuePair<string, object> data in response)
+        {
+                Console.WriteLine(data.Key + " = " + data.Value);
+        }
+        Console.WriteLine("##########################\n");
+
+            System.Threading.Thread.Sleep(10000);
             object code;
             response.TryGetValue("id_transaction", out code);
             response = client.sign_check(Convert.ToString(code));
@@ -45,7 +55,7 @@ namespace dfva_csharp_console
             {
                 Console.WriteLine(data.Key + " = " + data.Value);
             }
-            Console.WriteLine("Delete: " + client.sign_delete(Convert.ToString(code)));
+/**           Console.WriteLine("Delete: " + client.sign_delete(Convert.ToString(code)));
 
 
             log.Info("--- AUTENTICANDO UNA PERSONA ---");
@@ -75,7 +85,7 @@ namespace dfva_csharp_console
             {
                 Console.WriteLine(data.Key + " = " + data.Value);
             }
-
+    **/
 
         }
     }
